@@ -1,0 +1,14 @@
+{
+  "name": "boardbot-mvp",
+  "version": "0.1.0",
+  "description": "boardbot mvp",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "discord.js": "^13.6.0"
+  }
+}
