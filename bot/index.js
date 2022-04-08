@@ -1,10 +1,10 @@
 // dotenv setup
 require("dotenv").config();
 
-// discord.js variables
+// import these Discord.js modules as local constants
 const { Client, Intents } = require('discord.js');
 
-// create a new client instance
+// create a new bot client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 
 // once the client is ready, run the code in the anonymous function:
