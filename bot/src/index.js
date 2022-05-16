@@ -2,7 +2,10 @@
 import 'dotenv/config';
 
 // import these Discord.js modules as local constants
-import { Client, Intents } from 'discord.js';
+import { Client, Intents, Collection } from 'discord.js';
+
+import fs from 'node:fs';
+import path from 'node:path';
 
 // create a new bot client instance
 const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
@@ -12,20 +15,32 @@ client.once('ready', () => {
     console.log('Ready!');    
 });
 
+client.commands = new Collection();
+
+const commandsPath = path.join(path.resolve('src'), 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = await import(filePath);
+
+    client.commands.set(command.default.data.name, command.default);
+}
+
 client.on('interactionCreate', async interaction => {
     // no support for interations except commands yet
     if (!interaction.isCommand()) return;
 
-    const { commandName } = interaction;
+    const command = client.commands.get(interaction.commandName);
 
-    if (commandName === 'ping') {
-        await interaction.reply('Pong!');
+    if (!command) return;
+
+    try {
+        await command.execute(interaction);
     }
-    else if (commandName === 'server') {
-        await interaction.reply(`Server name: ${interaction.guild.name}\nTotal members: ${interaction.guild.memberCount}`);
-    }
-    else if (commandName === 'user') {
-        await interaction.reply(`Your tag: ${interaction.user.tag}\nYour ID: ${interaction.user.id}`);
+    catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true});
     }
 });
 
