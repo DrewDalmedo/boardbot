@@ -22,13 +22,13 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
-    const command = await import(filePath);
+    const command = (await import(filePath)).default;
 
-    client.commands.set(command.default.data.name, command.default);
+    client.commands.set(command.data.name, command);
 }
 
 client.on('interactionCreate', async interaction => {
-    // no support for interations except commands yet
+    // check if the interaction is a registered command
     if (!interaction.isCommand()) return;
 
     const command = client.commands.get(interaction.commandName);

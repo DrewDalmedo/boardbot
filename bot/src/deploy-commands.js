@@ -11,9 +11,9 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file=>file.endsWith('.j
 
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
-    const command = await import(filePath)
+    const command = (await import(filePath)).default
 
-    commands.push(command.default.data.toJSON());
+    commands.push(command.data.toJSON());
 }
 
 const rest = new REST({ version: '9' }).setToken(process.env.BOT_TOKEN);
